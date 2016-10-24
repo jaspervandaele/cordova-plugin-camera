@@ -203,17 +203,8 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     //--------------------------------------------------------------------------
 
     private String getTempDirectoryPath() {
-        File cache = null;
-
-        // SD Card Mounted
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            cache = cordova.getActivity().getExternalCacheDir();
-        }
         // Use internal storage
-        else {
-            cache = cordova.getActivity().getCacheDir();
-        }
-
+        File cache = cordova.getActivity().getCacheDir();
         // Create the cache directory if it doesn't exist
         cache.mkdirs();
         return cache.getAbsolutePath();
@@ -367,6 +358,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
                 }
                 File photo = createCaptureFile(encodingType);
                 croppedUri = Uri.fromFile(photo);
+                intent.setData(croppedUri);
                 intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, croppedUri);
             } else {
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -1147,11 +1139,8 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
      * @return Uri
      */
     private Uri whichContentStore() {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            return android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        } else {
             return android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
-        }
+
     }
 
     /**
